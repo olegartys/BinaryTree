@@ -22,6 +22,8 @@ private:
 
     comparator compar;
 
+    value_type& _insert(const key_type&, const value_type&);
+    value_type& _find(const key_type&, bool& flag) const;
     void _symmetric_pass(node* , executor, void*) const;
     void _beatiful_print(node*, int) const;
 
@@ -33,11 +35,9 @@ public:
 
     bool is_empty() const;
 
-    void insert(const key_type&, const value_type&);
     value_type& operator[] (const key_type&);
     value_type& operator= (const value_type&);
 //    value_type delete_node(const value_type&);
-    value_type& find(const key_type&) const;
 
     void symmetric_pass(executor, void*) const;
 
@@ -47,22 +47,16 @@ public:
 };
 
 template<typename node_type, typename value_type>
-value_type& binary_tree<node_type, value_type>::
-operator= (const value_type& rvalue) {
-
-    std::cout << "I am here" << std::endl;
-
-}
-
-template<typename node_type, typename value_type>
 /**
  * @brief binary_tree<value_type>::insert inserts element into a tree
  * @param val element to insert
  */
-void binary_tree<node_type, value_type>::
-insert(const node_type& key, const value_type& val) {
-    if (root == nullptr)
+value_type& binary_tree<node_type, value_type>::
+_insert(const node_type& key, const value_type& val) {
+    if (root == nullptr) {
         root = new node(key, val);
+        return root->get_val();
+    }
     else {
         node *n = root, *p;
         int result;
@@ -75,48 +69,79 @@ insert(const node_type& key, const value_type& val) {
             else if (result < 0) {
                 n = p->left;
             }
-            else
-                return;
+            else {
+                std::cout << "HERE" << std::endl;
+                return p->get_val();
+            }
         }
-        if (result > 0)
+        if (result > 0) {
             p->right = new node(key, val);
-        else
+            return p->right->get_val();
+        }
+        else {
             p->left = new node(key, val);
+            return p->left->get_val();
+        }
     }
 }
 
 template<typename key_type, typename value_type>
 /**
  * @brief binary_tree::find find elements in a tree
- * @param val value to search
- * @return element or nullptr
+ * @param key key to search
+ * @param is_contains flag that becomes true if element with key already exists
+ * @return found element or root
  */
 value_type& binary_tree<key_type, value_type>::
-find(const key_type& key) const {
-    node* node = root;
-    int result = (*compar)(key, root->get_key());
-    while (node) {
-        if (result > 0)
-            node = node->right;
-        else if (result < 0)
-            node = node->left;
-        else
-            return node->get_val();
-        result = (*compar)(key, node->get_key());
+_find(const key_type& key, bool& is_contains) const {
+    // If tree is empty, make contains flag false and return zero-value for value_type
+    if (root == nullptr) {
+        is_contains = false;
+        return *(new value_type());
+    // Else try to find key
+    } else {
+        node* node = root;
+        int result = (*compar)(key, root->get_key());
+        while (node) {
+            if (result > 0)
+                node = node->right;
+            else if (result < 0)
+                node = node->left;
+            else {
+                is_contains = true;
+                return node->get_val();
+            }
+            if (node)
+                result = (*compar)(key, node->get_key());
+        }
+
+        // if element is not in a tree, return zero-value for type value_type
+        //if (!is_contains) {
+        return *(new value_type());
+        //}
     }
-    throw std::exception();
 }
 
 template <typename key_type, typename value_type>
 /**
  * @brief binary_tree<key_type, value_type>::operator []
+ * Tries to find element with the key and return ref to it.
+ * If key is not in a tree add a new node with this key and init it with
+ * zero meaning.
+ * @param key Key to access node
+ * @return Reference to a value that contains in a node
  */
 value_type& binary_tree<key_type, value_type>::
 operator[](const key_type& key) {
-    try {
-        return this->find(key);
-    } catch (std::exception& e) {
-        std::cerr << "ERROR in []" << std::endl;
+    bool is_contains = false;
+    value_type& x = this->_find(key, is_contains);
+    std::cout << "I am in []" << std::endl;
+
+    if (is_contains) {
+        return x;
+    }
+    else {
+        return this->_insert(key, value_type());//this->_find(key, is_contains);
     }
 }
 
@@ -236,7 +261,7 @@ _beatiful_print(node* node, int level) const {
         _beatiful_print(node->right, level+1);
         for (int i = 0; i < level; i++)
             std::cout << "     ";
-        std::cout << node->get_val() << ":" << node->get_key() << std::endl;
+        std::cout << node->get_key() << ":" << node->get_val() << std::endl;
         _beatiful_print(node->left, level+1);
     }
 }
