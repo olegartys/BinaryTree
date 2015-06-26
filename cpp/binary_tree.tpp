@@ -29,8 +29,9 @@ private:
 public:
     node* root;
     binary_tree(comparator);
+    binary_tree(const binary_tree<key_type, value_type>& cptree);
+    
 //    binary_tree(std::initializer_list<value_type>, comparator);
-//    binary_tree(const binary_tree<value_type>& cptree);
 //    binary_tree(binary_tree<key_type, value_type>&& mvtree);
 
     bool is_empty() const;
@@ -118,9 +119,7 @@ _find(const key_type& key, bool& is_contains) const {
         }
 
         // if element is not in a tree, return zero-value for type value_type
-        //if (!is_contains) {
         return *(new value_type());
-        //}
     }
 }
 
@@ -137,13 +136,12 @@ value_type& binary_tree<key_type, value_type>::
 operator[](const key_type& key) {
     bool is_contains = false;
     value_type& x = this->_find(key, is_contains);
-    std::cout << "I am in []" << std::endl;
 
     if (is_contains) {
         return x;
     }
     else {
-        return this->_insert(key, value_type());//this->_find(key, is_contains);
+        return this->_insert(key, value_type());
     }
 }
 
@@ -175,35 +173,26 @@ binary_tree(comparator cmp) {
 
 //}
 
-//TODO конструктор копии (разобраться с ключами)
-//template<typename value_type>
-//binary_tree<value_type>::
-///**
-// * @brief binary_tree copy constructor
-// * @param copy_tree tree to copy
-// */
-//binary_tree(const binary_tree<value_type>& copy_tree) {
 
-//    // Init root
-//    root = nullptr;
+template<typename key_type, typename value_type>
+binary_tree<key_type, value_type>::
+/**
+ * @brief binary_tree copy constructor
+ * @param copy_tree tree to copy
+ */
+binary_tree(const binary_tree<key_type, value_type>& cptree) {
 
-//    // Function to compare elements
-//    compar = copy_tree.compar;
+    // Init root
+    root = nullptr;
 
-//    // Vector with elemennts of old tree
-//    std::vector<value_type>* values_to_copy = new std::vector<value_type>();
-
-//    // Init this vector
-//    copy_tree.symmetric_pass(
-//        [](const value_type& val, void* values_to_copy) {((std::vector<value_type>*)values_to_copy)->push_back(val);},
-//        (void*)values_to_copy);
-
-//    // Insert elements from vector into tree
-//    for (auto it: *values_to_copy)
-//        this->insert(it);
-
-//    delete values_to_copy;
-//}
+    // Function to compare elements
+    compar = cptree.compar;
+    
+    // Passing through the cptree and inserting values into this tree
+    cptree.symmetric_pass([](node& node, void* _this) {
+        static_cast<binary_tree<key_type, value_type>* >(_this)[node.get_key()] = node.get_val();
+    }, static_cast<void*>(this));
+}
 
 template<typename key_type, typename value_type>
 /**
