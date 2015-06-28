@@ -23,11 +23,12 @@ private:
 
     value_type& _insert(const key_type&, const value_type&);
     value_type& _find(const key_type&, bool& flag) const;
-    void _symmetric_pass(node* , executor, void*) const;
+    void _symmetric_pass(node*, executor, void*) const;
     void _beatiful_print(node*, int) const;
 
-public:
     node* root;
+
+public:
     binary_tree(comparator);
     binary_tree(const binary_tree<key_type, value_type>& cptree);
     
@@ -37,8 +38,8 @@ public:
     bool is_empty() const;
 
     value_type& operator[] (const key_type&);
-    value_type& operator= (const binary_tree<key_type, value_type>& cptree);
-    value_type& operator= (binary_tree<key_type, value_type>&& mvtree);
+    binary_tree<key_type, value_type>& operator= (const binary_tree<key_type, value_type>& cptree);
+    binary_tree<key_type, value_type>& operator= (binary_tree<key_type, value_type>&& mvtree);
 //    value_type delete_node(const value_type&);
 
     void symmetric_pass(executor, void*) const;
@@ -181,6 +182,7 @@ binary_tree<key_type, value_type>::
  * @param copy_tree tree to copy
  */
 binary_tree(const binary_tree<key_type, value_type>& cptree) {
+    std::cout << "Copy constructor" << std::endl;
 
     // Init root
     root = nullptr;
@@ -190,9 +192,32 @@ binary_tree(const binary_tree<key_type, value_type>& cptree) {
     
     // Passing through the cptree and inserting values into this tree
     cptree.symmetric_pass([](node& node, void* _this) {
-        static_cast<binary_tree<key_type, value_type>* >(_this)[node.get_key()] = node.get_val();
+        binary_tree<key_type, value_type>* t = static_cast<binary_tree<key_type, value_type>* >(_this);
+        (*t)[node.get_key()] = node.get_val();
     }, static_cast<void*>(this));
 }
+
+template<typename key_type, typename value_type>
+binary_tree<key_type, value_type>& binary_tree<key_type, value_type>::
+/**
+ * @brief operator =
+ * @param cptree
+ */
+operator= (const binary_tree<key_type, value_type>& cptree) {
+    std::cout << "Copy =" << std::endl;
+
+    delete this->root;
+    this->compar = cptree.compar;
+
+    // Passing through the cptree and inserting values into this tree
+    cptree.symmetric_pass([](node& node, void* _this) {
+        binary_tree<key_type, value_type>* t = static_cast<binary_tree<key_type, value_type>* >(_this);
+        (*t)[node.get_key()] = node.get_val();
+    }, static_cast<void*>(this));
+
+    return *this;
+}
+
 
 template<typename key_type, typename value_type>
 /**
@@ -204,25 +229,24 @@ is_empty() const {
     return (root == nullptr);
 }
 
-//TODO симметричный обход дерева (по ключу)
-//template<typename value_type>
-///**
-// * @brief binary_tree<value_type>::_symmetric_pass symmetric pass of the tree
-// * @param node element, from which pass starts
-// * @param exec function that executes for every node
-// * @param data data that will be passed into executor
-// */
-//void binary_tree<value_type>::
-//_symmetric_pass(node *node, executor exec, void* data) const {
+template<typename key_type, typename value_type>
+/**
+ * @brief binary_tree<value_type>::_symmetric_pass symmetric pass of the tree
+ * @param node element, from which pass starts
+ * @param exec function that executes for every node
+ * @param data data that will be passed into executor
+ */
+void binary_tree<key_type, value_type>::
+_symmetric_pass(node *node, executor exec, void* data) const {
 
-//    if (node) {
-//        _symmetric_pass(node->left, exec, data);
+    if (node) {
+        _symmetric_pass(node->left, exec, data);
 
-//        (*exec)(*node, data);
+        (*exec)(*node, data);
 
-//        _symmetric_pass(node->right, exec, data);
-//    }
-//}
+        _symmetric_pass(node->right, exec, data);
+    }
+}
 
 template<typename key_type, typename value_type>
 /**

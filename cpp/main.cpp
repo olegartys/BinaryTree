@@ -7,6 +7,7 @@
 #include <map>
 #include <string>
 #include <cstring>
+#include <vector>
 
 #include "binary_tree.tpp"
 
@@ -27,9 +28,13 @@ int main()
     tree[17] = "Sighka";
     tree[18] = "Masha";
 
-    cout << tree[20] << endl;
+    binary_tree<int, string> tree1(comparator);
+    tree1 = tree;
+    tree1.beautiful_print();
 
-    tree.beautiful_print();
+
+    vector<binary_tree<int, string> > v;
+    v.push_back(move(tree));
 
 //    tree = 17;
 //    tree["adds"];
