@@ -19,22 +19,22 @@ private:
     typedef int (*comparator)(const key_type&, const key_type&); //callback для сравнения двух элементов дерева
     typedef void (*executor)(node&, void* data); //callback, вызывающаяся для каждого элемента дерева
 
-    comparator compar;
-
-    value_type& _insert(const key_type&, const value_type&);
     value_type& _find(const key_type&, bool& flag) const;
     void _symmetric_pass(node*, executor, void*) const;
     void _beatiful_print(node*, int) const;
 
     node* root;
+    comparator compar;
 
 public:
     binary_tree(comparator);
     binary_tree(const binary_tree<key_type, value_type>& cptree);
-    
-//    binary_tree(std::initializer_list<value_type>, comparator);
-//    binary_tree(binary_tree<key_type, value_type>&& mvtree);
+    binary_tree(binary_tree<key_type, value_type>&& mvtree);
 
+//    binary_tree(std::initializer_list<value_type>, comparator);
+
+    value_type& insert(const key_type&, const value_type&);
+//    value_type& find(const key_type&) const;
     bool is_empty() const;
 
     value_type& operator[] (const key_type&);
@@ -43,7 +43,6 @@ public:
 //    value_type delete_node(const value_type&);
 
     void symmetric_pass(executor, void*) const;
-
     void beautiful_print() const;
 
     ~binary_tree();
@@ -55,7 +54,7 @@ template<typename node_type, typename value_type>
  * @param val element to insert
  */
 value_type& binary_tree<node_type, value_type>::
-_insert(const node_type& key, const value_type& val) {
+insert(const node_type& key, const value_type& val) {
     if (root == nullptr) {
         root = new node(key, val);
         return root->get_val();
@@ -142,7 +141,7 @@ operator[](const key_type& key) {
         return x;
     }
     else {
-        return this->_insert(key, value_type());
+        return this->insert(key, value_type());
     }
 }
 
@@ -198,6 +197,22 @@ binary_tree(const binary_tree<key_type, value_type>& cptree) {
 }
 
 template<typename key_type, typename value_type>
+binary_tree<key_type, value_type>::
+/**
+ * @brief binary_tree move constructor
+ * @param copy_tree tree to move
+ */
+binary_tree(binary_tree<key_type, value_type>&& mvtree) {
+    std::cout << "Move constructor" << std::endl;
+
+    root = mvtree.root;
+    compar = mvtree.compar;
+
+    mvtree.root = nullptr;
+    mvtree.compar = nullptr;
+}
+
+template<typename key_type, typename value_type>
 binary_tree<key_type, value_type>& binary_tree<key_type, value_type>::
 /**
  * @brief operator =
@@ -218,6 +233,23 @@ operator= (const binary_tree<key_type, value_type>& cptree) {
     return *this;
 }
 
+template<typename key_type, typename value_type>
+binary_tree<key_type, value_type>& binary_tree<key_type, value_type>::
+/**
+ * @brief operator =
+ * @param cptree
+ */
+operator= (binary_tree<key_type, value_type>&& mvtree) {
+    std::cout << "Move =" << std::endl;
+
+    root = mvtree.root;
+    compar = mvtree.compar;
+
+    mvtree.root = nullptr;
+    mvtree.compar = nullptr;
+
+    return *this;
+}
 
 template<typename key_type, typename value_type>
 /**

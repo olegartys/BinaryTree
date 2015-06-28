@@ -29,12 +29,14 @@ int main()
     tree[18] = "Masha";
 
     binary_tree<int, string> tree1(comparator);
-    tree1 = tree;
+    tree1 = move(tree);
     tree1.beautiful_print();
 
 
     vector<binary_tree<int, string> > v;
     v.push_back(move(tree));
+    tree.beautiful_print();
+    tree1.beautiful_print();
 
 //    tree = 17;
 //    tree["adds"];
