@@ -28,16 +28,10 @@ int main()
     tree[17] = "Sighka";
     tree[18] = "Masha";
 
-    binary_tree<int, string> tree1(comparator);
-    tree1 = move(tree);
-    tree1.beautiful_print();
+    tree_node<int, int> node(1, 1);
+    tree_node<int, int> node1(move(node));
 
-
-    vector<binary_tree<int, string> > v;
-    v.push_back(move(tree));
-    tree.beautiful_print();
-    tree1.beautiful_print();
-
+    cout << node.get_val() << endl << node1.get_val() << endl;
 //    tree = 17;
 //    tree["adds"];
 

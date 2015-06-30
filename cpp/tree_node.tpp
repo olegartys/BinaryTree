@@ -18,21 +18,69 @@ private:
     tree_node<key_type, value_type>* left;
     tree_node<key_type, value_type>* right;
 
-    bool _is_marked;
     bool _is_leaf;
+    bool _is_marked;
 
     friend class binary_tree<key_type, value_type>;
 
 public:
     // Constructors
-    tree_node(const key_type& key, const value_type& val) :
-        key(key), val(val), left(nullptr), right(nullptr), _is_leaf(true) {}
+    tree_node(const key_type& key, const value_type& val,
+              tree_node* left = nullptr,
+              tree_node* right = nullptr,
+              const bool is_leaf = true,
+              const bool is_marked = false) :
+        key(key), val(val),
+        left(left), right(right),
+        _is_leaf(is_leaf), _is_marked(is_marked) {}
+//    tree_node(const key_type& key, const value_type& val) :
+//        key(key), val(val), left(nullptr), right(nullptr), _is_leaf(true) {}
 
-    tree_node(const key_type& key, const value_type& val, const bool is_marked) :
-        key(key), val(val), left(nullptr), right(nullptr), _is_leaf(true), _is_marked(is_marked) {}
+//    tree_node(const key_type& key, const value_type& val, const bool is_marked) :
+//        key(key), val(val), left(nullptr), right(nullptr), _is_leaf(true), _is_marked(is_marked) {}
 
-    tree_node(const tree_node& left, const tree_node& right, const value_type& val) :
-        key(key), val(val), left(left), right(right), _is_leaf(true) {}
+//    tree_node(const tree_node& left, const tree_node& right, const value_type& val) :
+//        key(key), val(val), left(left), right(right), _is_leaf(true) {}
+
+    // Copy constructor
+    tree_node(const tree_node<key_type, value_type>& cpnode) :
+        key(cpnode.key), val(cpnode.val), left(cpnode.left), right(cpnode.right),
+        _is_leaf(cpnode._is_leaf), _is_marked(cpnode._is_marked) {}
+
+    // Move constructor
+    tree_node(tree_node<key_type, value_type>&& mvnode) {
+        key = std::move(mvnode.key);
+        val = std::move(mvnode.val);
+        left = std::move(mvnode.left);
+        right = std::move(mvnode.right);
+        _is_leaf = mvnode._is_leaf;
+        _is_marked = mvnode._is_marked;
+
+    }
+
+    tree_node<key_type, value_type>& operator= (const tree_node<key_type, value_type>& cpnode) {
+        key = cpnode.key;
+        val = cpnode.val;
+
+        left = cpnode.left;
+        right = cpnode.right;
+
+        _is_leaf = cpnode._is_leaf;
+        _is_marked = cpnode._is_marked;
+        return *this;
+    }
+
+    tree_node<key_type, value_type>& operator= (tree_node<key_type, value_type>&& mvnode) {
+        key = std::move(key);
+        val = std::move(val);
+
+        left = std::move(mvnode.left);
+        right = std::move(mvnode.right);
+
+        _is_leaf = cpnode._is_leaf;
+        _is_marked = cpnode._is_marked;
+        return *this;
+    }
 
     // Getters and setters
     bool is_leaf() const {return _is_leaf;}
