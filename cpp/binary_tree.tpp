@@ -9,7 +9,8 @@
 template<typename key_type, typename value_type>
 class tree_node;
 
-template<typename key_type, typename value_type>
+template<typename key_type,
+         typename value_type>
 /**
  * @brief Implementation of binary tree
  */
@@ -25,17 +26,19 @@ private:
 
     node* root;
     comparator compar;
+    size_t size;
 
 public:
     binary_tree(comparator);
     binary_tree(const binary_tree<key_type, value_type>& cptree);
     binary_tree(binary_tree<key_type, value_type>&& mvtree);
-
-//    binary_tree(std::initializer_list<value_type>, comparator);
+    //TODO implement this constructor
+    binary_tree(std::initializer_list<key_type, value_type>, comparator);
 
     value_type& insert(const key_type&, const value_type&);
 //    value_type& find(const key_type&) const;
     bool is_empty() const;
+    size_t get_size() const;
 
     value_type& operator[] (const key_type&);
     binary_tree<key_type, value_type>& operator= (const binary_tree<key_type, value_type>& cptree);
@@ -83,6 +86,7 @@ insert(const node_type& key, const value_type& val) {
             p->left = new node(key, val);
             return p->left->get_val();
         }
+        size++;
     }
 }
 
@@ -153,6 +157,7 @@ template<typename key_type, typename value_type>
 binary_tree<key_type, value_type>::
 binary_tree(comparator cmp) {
     compar = cmp;
+    size = 0;
     root = nullptr;
 }
 
@@ -194,6 +199,8 @@ binary_tree(const binary_tree<key_type, value_type>& cptree) {
         binary_tree<key_type, value_type>* t = static_cast<binary_tree<key_type, value_type>* >(_this);
         (*t)[node.get_key()] = node.get_val();
     }, static_cast<void*>(this));
+
+    size = cptree.size;
 }
 
 template<typename key_type, typename value_type>
@@ -207,11 +214,14 @@ binary_tree(binary_tree<key_type, value_type>&& mvtree) {
 
     root = mvtree.root;
     compar = mvtree.compar;
+    size = mvtree.size;
 
     mvtree.root = nullptr;
     mvtree.compar = nullptr;
+    mvtree.size = 0;
 }
 
+//TODO need to test
 template<typename key_type, typename value_type>
 binary_tree<key_type, value_type>& binary_tree<key_type, value_type>::
 /**
@@ -221,8 +231,10 @@ binary_tree<key_type, value_type>& binary_tree<key_type, value_type>::
 operator= (const binary_tree<key_type, value_type>& cptree) {
     std::cout << "Copy =" << std::endl;
 
-    delete this->root;
-    this->compar = cptree.compar;
+    //delete root;
+    root = nullptr;
+    compar = cptree.compar;
+    size = cptree.size;
 
     // Passing through the cptree and inserting values into this tree
     cptree.symmetric_pass([](node& node, void* _this) {
@@ -244,6 +256,7 @@ operator= (binary_tree<key_type, value_type>&& mvtree) {
 
     root = mvtree.root;
     compar = mvtree.compar;
+    size = mvtree.size;
 
     mvtree.root = nullptr;
     mvtree.compar = nullptr;
@@ -260,6 +273,17 @@ bool binary_tree<key_type, value_type>::
 is_empty() const {
     return (root == nullptr);
 }
+
+template<typename key_type, typename value_type>
+/**
+ * @brief binary_tree<key_type, value_type>::get_size
+ * @return count of element in the tree
+ */
+size_t binary_tree<key_type, value_type>::
+get_size() const {
+    return size;
+}
+
 
 template<typename key_type, typename value_type>
 /**
