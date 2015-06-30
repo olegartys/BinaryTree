@@ -29,7 +29,8 @@ int main()
     tree[18] = "Masha";
 
     tree_node<int, int> node(1, 1);
-    tree_node<int, int> node1(move(node));
+    tree_node<int, int> node1(0, 0);
+    node1 = move(node);
 
     cout << node.get_val() << endl << node1.get_val() << endl;
 //    tree = 17;

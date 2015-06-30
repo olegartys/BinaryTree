@@ -71,14 +71,14 @@ public:
     }
 
     tree_node<key_type, value_type>& operator= (tree_node<key_type, value_type>&& mvnode) {
-        key = std::move(key);
-        val = std::move(val);
+        key = std::move(mvnode.key);
+        val = std::move(mvnode.val);
 
         left = std::move(mvnode.left);
         right = std::move(mvnode.right);
 
-        _is_leaf = cpnode._is_leaf;
-        _is_marked = cpnode._is_marked;
+        _is_leaf = mvnode._is_leaf;
+        _is_marked = mvnode._is_marked;
         return *this;
     }
 
