@@ -3,7 +3,8 @@
 
 #include "binary_tree.tpp"
 
-template<typename key_type, typename value_type>
+template<typename key_type,
+        typename value_type>
 class binary_tree;
 
 template<typename key_type, typename value_type>

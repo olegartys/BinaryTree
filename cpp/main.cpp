@@ -15,37 +15,38 @@ using namespace std;
 
 inline int comparator(const int& a, const int& b) {return a - b;}
 inline int comparator(const string& a, const string& b) {return strcmp(a.c_str(), b.c_str());}
-//inline void printer(tree_node<int>& node, void* data) {cout << node.get_val() << endl;}
+inline void printer(typename binary_tree<int, int>::node& node, void* data) {cout << node.val << endl;}
 
 bool is_valid(const string &s) noexcept(false);
 
+template <typename K, typename V>
+void f(binary_tree<K, V> t) {
+    cout << "\n=================\n";
+    t.beautiful_print();
+    cout << "\n=================\n";
+};
+
 int main()
 {
-    binary_tree<int, string> tree(comparator);
+    binary_tree<int, int> tree([](const int& a, const int& b) -> int {return a-b;});
+    binary_tree<int, int> tree1([](const int& a, const int& b) -> int {return a-b;});
 
-    cout << ">Enter decimals: " << endl;
+    for (int i = 1; i <= 5; ++i) {
+        tree[i] = i;
+        tree[-i] = -i;
+    }
 
-    tree[17] = "Sighka";
-    tree[18] = "Masha";
+    int a[] = {1, 2, 3}
 
-    tree_node<int, int> node(1, 1);
-    tree_node<int, int> node1(0, 0);
-    node1 = move(node);
+    for (int i = 10; i <= 20; ++i) {
+        tree1[i] = i;
+        tree1[-i] = -i;
+    }
 
-    cout << node.get_val() << endl << node1.get_val() << endl;
-//    tree = 17;
-//    tree["adds"];
+    f(std::move(tree));
+    tree.beautiful_print();
 
-//    tree["Sighka"] = 17;
 
-//    for (int i = 1; i < 10; i++) {
-//        tree.insert(i, i);
-//        tree.insert(-i, -i);
-//    }
-
-//    tree.find(0) = 7;
-
-   // tree.beautiful_print();
 
 //    // Input data
 //    string line;
@@ -66,11 +67,11 @@ int main()
 //    cout << endl;
 
 //    // Example of using symmetric pass without data
-//    tree.symmetric_pass(printer, nullptr);
+//    tree.symmetric_traversal(printer, nullptr);
 
 //    // Example of using symmetric pass to find sum
 //    int sum = 0;
-//    tree.symmetric_pass([](tree_node<int>& node, void* sum) {
+//    tree.symmetric_traversal([](tree_node<int>& node, void* sum) {
 //        *(int*)sum += node.get_val();
 //    }, (void*)&sum);
 
